@@ -5,6 +5,8 @@
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <esther@kaffeehaus.ch>
+ * @author     Jürgen A.Lamers <jaloma.ac@googlemail.de>
+ * @author     Elan Ruusamäe <glen@delfi.ee>
  */
 
 if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../').'/');

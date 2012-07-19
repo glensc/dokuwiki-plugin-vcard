@@ -175,11 +175,11 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
             $link['name']   = $renderer->_xmlEntities($data[0].( $data[2] ? ' '.$data[2] : '' ));
 
             $renderer->doc .= $renderer->_formatLink($link);
-            if ( @file_exists(DOKU_INC.'lib/plugins/folded/closed.gif') && ($folded) ){
+
+            if (@file_exists(DOKU_INC.'lib/plugins/folded/closed.gif') && $folded){
                 // folded plugin is installed: enables additional feature
-		$renderer->doc .= '<a href="#" class="folder" onclick="fold(this, '.$plugin_folded_count.');">';
-		$renderer->doc .= '<img src="'.DOKU_BASE.'lib/plugins/folded/closed.gif" alt="Skryty obsah" title="Zobraz" /></a>';
-		$renderer->doc .= '<span class="folded" id="folded_'.$plugin_folded_count.'" style="display:none;">';
+                $renderer->doc .= '<a href="#folded_'.$plugin_folded_count.'" class="folder"></a>';
+                $renderer->doc .= '<span class="folded hidden" id="folded_'.$plugin_folded_count.'">';
                 $renderer->doc .= $folded;
                 $renderer->doc .= '</span>';
             }

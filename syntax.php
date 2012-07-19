@@ -6,36 +6,21 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <esther@kaffeehaus.ch>
  */
- 
+
 if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../').'/');
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
 
-// maintain a global count of the number of expandable vcards in the page, 
+// maintain a global count of the number of expandable vcards in the page,
 // this allows each to be uniquely identified
 global $plugin_folded_count;
 if (!isset($plugin_folded_count)) $plugin_folded_count = 0;
- 
+
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
  */
 class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
- 
-    /**
-     * return some info
-     */
-    function getInfo(){
-        return array(
-            'author' => 'Esther Brunner',
-            'email'  => 'esther@kaffeehaus.ch',
-            'date'   => '2007-05-16',
-            'name'   => 'vCard Plugin',
-            'desc'   => 'creates a link to download a vCard file',
-            'url'    => 'http://wiki.splitbrain.org/plugin:vcard',
-        );
-    }
- 
     function getType(){ return 'substition'; }
     function getSort(){ return 314; }
     function connectTo($mode) { $this->Lexer->addSpecialPattern("\{\{vcard>.*?\}\}",$mode,'plugin_vcard'); }
@@ -44,7 +29,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
      * Handle the match
      */
     function handle($match, $state, $pos, &$handler){
-        
+
         // strip markup
         $match = substr($match,8,-2);
 
@@ -55,7 +40,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
             list($zip,$city) = explode(' ',trim($place),2);
 # print('Ulice: ' .$street.', PSC: '.$zip.', Mesto: '.$city.', Zeme: '.$country.'<br/>');
         }
-        
+
         // split phone(s) from rest and create an array
         list($match,$phones) = explode('#',$match,2);
         $phones = explode('&',$phones);
@@ -66,14 +51,14 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         if (preg_match('/\d{4}\-\d{2}\-\d{2}/',$match,$birthday)){
             $birthday = $birthday[0];
         }
-        
+
         // get website
         $punc = '.:?\-;,';
         $any  = '\w/~:.?+=&%@!\-';
         if (preg_match('#http://['.$any.']+?(?=['.$punc.']*[^'.$any.'])#i',$match,$website)){
              $website = $website[0];
         }
-        
+
         // get e-mail address
         if (preg_match('/<[\w0-9\-_.]+?@[\w\-]+\.[\w\-\.]+\.*[\w]+>/i',$match,$email,PREG_OFFSET_CAPTURE)){
              $match = substr($match,0,$email[0][1]);
@@ -90,7 +75,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         #     $email = substr($email[0][0],1,-1);
         }
 
-# print('Jmeno: '.$match.'<br>');        
+# print('Jmeno: '.$match.'<br>');
         // the rest is the name
         $match = trim($match);
         $pos = strrpos($match,' ');
@@ -102,9 +87,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
             $middle = NULL;
             $last   = NULL;
         }
-        
+
         return array($first,$middle,$last,$email,$website,$birthday,$phones,trim($street),$zip,$city,trim($country),$company);
-    } 
+    }
 
     /**
      * Create output
@@ -123,7 +108,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
             $link['suf']    = '';
             $link['more']   = 'rel="nofollow"';
             $link['target'] = '';
-        
+
             $script = DOKU_URL.'lib/plugins/vcard/vcard.php';
             $folded = '';
             $script .= '?first='.urlencode($data[0]);
@@ -169,7 +154,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
                 $folded .= ' '.$renderer->_xmlEntities($data[9]);
             }
             if ( $data[10] ) $script .= '&country='.urlencode($data[10]);
-            
+
             $link['title']  = $email;
             $link['url']    = $script;
             $link['name']   = $renderer->_xmlEntities($data[0].( $data[2] ? ' '.$data[2] : '' ));
@@ -183,15 +168,15 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
                 $renderer->doc .= $folded;
                 $renderer->doc .= '</span>';
             }
-            
+
             return true;
         }
         return false;
     }
-    
+
     function _mailShield($address){
         global $conf;
-        
+
         //shields up
         // copied from emaillink() in xhtml.php
         if($conf['mailguard']=='visible'){
@@ -200,7 +185,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
             $address = str_replace('.',' [dot] ',$address);
             $address = str_replace('-',' [dash] ',$address);
             return $renderer->_xmlEntities($address);
-            
+
         }elseif($conf['mailguard']=='hex'){
             //encode every char to a hex entity
             for ($x=0; $x < strlen($address); $x++) {
@@ -213,10 +198,10 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 #            return $renderer->_xmlEntities($address);
 
         }
-    
+
     }
-     
+
 }
- 
+
 //Setup VIM: ex: et ts=4 enc=utf-8 :
 ?>

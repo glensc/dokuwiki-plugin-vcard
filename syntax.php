@@ -113,25 +113,26 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         $link['more']   = 'rel="nofollow"';
         $link['target'] = '';
 
-        $script = DOKU_URL.'lib/plugins/vcard/vcard.php';
-        $script .= '?';
+        // collect url parameters
+        $urlparams = array();
+
         $folded = '';
         // 0: $first
-        $script .= 'first='.urlencode($first);
+        $urlparams['first'] = $first;
         $fullname = '';
         if ($hcard) {
           $fullname .= '<span class="given-name">'.$first.'</span>';
         }
         // 1: $middle
         if ( $middle ) {
-          $script .= '&middle='.urlencode($middle);
+          $urlparams['middle'] = $middle;
           if ($hcard) {
             $fullname .= ' <span class="addional-name">'.$middle.'</span>';
           }
         }
         // 2: $last
         if ( $last ) {
-          $script .= '&last='.urlencode($last);
+          $urlparams['last'] = $last;
           if ($hcard) {
             $fullname .= ' <span class="family-name">'.$last.'</span>';
           }
@@ -143,7 +144,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 11: $company
         if ( $company ) {
-            $script .= '&org='.urlencode($company);
+            $urlparams['org'] = $company;
             if ($hcard) {
               $folded .= '<'.$this->getConf('tag_org').'>';
               $folded .= '<b class="org">'.$company.'</b>';
@@ -154,8 +155,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 3: $email
         if ( $email ){
-            $email = $email;
-            $script .= '&email='.urlencode($email);
+            $urlparams['email'] = $email;
             if ($hcard) {
               $folded .= ' <b>'.$this->getLang('email').'</b> ';
               $folded .= ' <a href="mailto:'.$email.'" class="mail">'.$email.'</a>';
@@ -168,7 +168,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         // 6: $phones
         // 0: Work
         if ( $phones[0] ){
-            $script .= '&work='.urlencode(trim($phones[0]));
+            $urlparams['work'] = trim($phones[0]);
             if ($hcard) {
               $folded .= ' '.
                 '<'.$this->getConf('tag_tel').' class="tel">'.
@@ -184,7 +184,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 1: Mobile
         if ( $phones[1] ){
-            $script .= '&cell='.urlencode(trim($phones[1]));
+            $urlparams['cell'] = trim($phones[1]);
             if ($hcard) {
               $folded .= ' '.
                 '<'.$this->getConf('tag_tel').' class="tel">'.
@@ -199,7 +199,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 2: Home
         if ( $phones[2] ) {
-            $script .= '&home='.urlencode(trim($phones[2]));
+            $urlparams['home'] = trim($phones[2]);
             if ($hcard) {
               $folded .= ' '.
                 '<'.$this->getConf('tag_tel').' class="tel">'.
@@ -214,7 +214,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 4: $website
         if ( $website ){
-            $script .= '&website='.urlencode($website);
+            $urlparams['website'] = $website;
             if ($hcard) {
               $folded .= ' <b>'.$this->getLang('website').'</b> ';
             }
@@ -228,7 +228,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
         // 5: $birthday
         if ( $birthday ) {
-          $script .= '&birthday='.$birthday;
+          $urlparams['birthday'] = $birthday;
           if ($hcard) {
             $folded .= ' '.
               '<'.$this->getConf('tag_bday').' class="bday">'.
@@ -250,11 +250,11 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
                 '</'.$this->getConf('tag_tel_type_fax').'>'.
                 '</'.$this->getConf('tag_tel').'>';
           }
-          $script .= '&fax='.urlencode(trim($phones[3]));
+          $urlparams['fax'] = trim($phones[3]);
         }
         // 7: $street
         if ( $street ){
-            $script .= '&street='.urlencode($street);
+            $urlparams['street'] = $street;
             if ($hcard) {
               $folded .= ' <b>'.$this->getLang('address').'</b> '.
                 '<'.$this->getConf('tag_street-address').' class="street-address">'.
@@ -266,7 +266,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 8: $zip
         if ( $zip ){
-            $script .= '&zip='.urlencode($zip);
+            $urlparams['zip'] = $zip;
             if ($hcard) {
               $folded .= ' <'.$this->getConf('tag_postal-code').' class="postal-code">'.
                 $renderer->_xmlEntities($zip).
@@ -277,7 +277,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 9: $city
         if ( $city ){
-            $script .= '&city='.urlencode($city);
+            $urlparams['city'] = $city;
             if ($hcard) {
               $folded .= ' <'.$this->getConf('tag_locality').' class="locality">'.
                 $renderer->_xmlEntities($city).
@@ -288,7 +288,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         // 10: $country
         if ( $country ) {
-              $script .= '&country='.urlencode($country);
+            $urlparams['country'] = $country;
             if ($hcard) {
               $folded .= ' <'.$this->getConf('tag_country').' class="country-name">'.
                 $renderer->_xmlEntities($country).
@@ -296,12 +296,13 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
             }
         }
 
+
         $link['title']  = $email;
-        $link['url']    = $script;
+        $link['url']    = DOKU_URL.'lib/plugins/vcard/vcard.php?'.http_build_query($urlparams, null, '&');
         if ($hcard) {
             $link['name']   = $fullname;
         } else {
-            $link['name']   = $renderer->_xmlEntities($data[0].( $last ? ' '.$last : '' ));
+            $link['name']   = $renderer->_xmlEntities($data[0] . ($last ? ' '.$last : ''));
         }
         if ($hcard) {
           $folded .= '</'.$this->getConf('tag_org').'>';

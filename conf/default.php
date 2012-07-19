@@ -1,6 +1,6 @@
 <?php
 
-$conf['email_shortcut'] = 1;
+$conf['email_shortcut'] = 0;
 $conf['do_hcard'] = 0;
 $conf['tag_vcard']= 'div';
 $conf['tag_org'] = 'div';

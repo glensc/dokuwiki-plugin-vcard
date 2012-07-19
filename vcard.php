@@ -34,6 +34,7 @@ function escape($string) {
 }
 
 // taken from PHP documentation comments
+if (!function_exists('quoted_printable_encode')) {
 function quoted_printable_encode($input, $line_max = 76) {
 	$hex = array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
 	$lines = preg_split("/(?:\r\n|\r|\n)/", $input);
@@ -65,6 +66,7 @@ function quoted_printable_encode($input, $line_max = 76) {
 		if ($j<count($lines)-1) $output .= $linebreak;
 	}
 	return trim($output);
+}
 }
 
 class vCard {

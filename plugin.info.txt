@@ -1,7 +1,7 @@
-base   eventum
+base   vcard
 author Elan Ruusamäe, Esther Brunner
 email  glen@delfi.ee, esther@kaffeehaus.ch
-date   2012-19-19
+date   2012-07-19
 name   vCard Plugin
 desc   Creates a link to download a vCard file
 url    http://www.dokuwiki.org/plugin:vcard

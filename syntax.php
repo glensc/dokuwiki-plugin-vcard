@@ -329,34 +329,6 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
         }
         return false;
     }
-
-    function _mailShield($address){
-        global $conf;
-
-        //shields up
-        // copied from emaillink() in xhtml.php
-        if($conf['mailguard']=='visible'){
-            //the mail name gets some visible encoding
-            $address = str_replace('@',' [at] ',$address);
-            $address = str_replace('.',' [dot] ',$address);
-            $address = str_replace('-',' [dash] ',$address);
-            return $renderer->_xmlEntities($address);
-
-        }elseif($conf['mailguard']=='hex'){
-            //encode every char to a hex entity
-            for ($x=0; $x < strlen($address); $x++) {
-                $encode .= '&#x' . bin2hex($address[$x]).';';
-            }
-            return $encode;
-
-        }else{
-            //keep address as is
-#            return $renderer->_xmlEntities($address);
-
-        }
-
-    }
-
 }
 
 //Setup VIM: ex: et ts=4 enc=utf-8 :

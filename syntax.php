@@ -28,64 +28,58 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
     /**
      * Handle the match
      */
-    function handle($match, $state, $pos, &$handler){
-
+    function handle($match, $state, $pos, &$handler) {
         // strip markup
-        $match = substr($match,8,-2);
+        $match = substr($match, 8, -2);
 
         // split address from rest and divide it into parts
-        list($match,$address) = explode('|',$match,2);
-        if ( $address ){
-            list($street,$place,$country) = explode(',',$address,3);
-            list($zip,$city) = explode(' ',trim($place),2);
-# print('Ulice: ' .$street.', PSC: '.$zip.', Mesto: '.$city.', Zeme: '.$country.'<br/>');
+        list($match,$address) = explode('|', $match, 2);
+        if ($address) {
+            list($street, $place, $country) = explode(',', $address, 3);
+            list($zip, $city) = explode(' ', trim($place), 2);
         }
 
         // split phone(s) from rest and create an array
-        list($match,$phones) = explode('#',$match,2);
-        $phones = explode('&',$phones);
-        foreach ( $phones as $phone) $phone = trim($phone);
-# print('Work '.$phones[0].' Mobile '.$phones[1].'Home '.$phones[2].'Fax '.$phones[3].'<br/>');
+        list($match, $phones) = explode('#', $match, 2);
+        $phones = explode('&', $phones);
+        foreach ($phones as $phone) {
+            $phone = trim($phone);
+        }
 
         // get birthday
-        if (preg_match('/\d{4}\-\d{2}\-\d{2}/',$match,$birthday)){
+        if (preg_match('/\d{4}\-\d{2}\-\d{2}/', $match, $birthday)) {
             $birthday = $birthday[0];
         }
 
         // get website
         $punc = '.:?\-;,';
         $any  = '\w/~:.?+=&%@!\-';
-        if (preg_match('#http://['.$any.']+?(?=['.$punc.']*[^'.$any.'])#i',$match,$website)){
-             $website = $website[0];
+        if (preg_match('#http://['.$any.']+?(?=['.$punc.']*[^'.$any.'])#i',$match,$website)) {
+            $website = $website[0];
         }
 
         // get e-mail address
-        if (preg_match('/<[\w0-9\-_.]+?@[\w\-]+\.[\w\-\.]+\.*[\w]+>/i',$match,$email,PREG_OFFSET_CAPTURE)){
-             $match = substr($match,0,$email[0][1]);
-             $email = substr($email[0][0],1,-1);
+        if (preg_match('/<[\w0-9\-_.]+?@[\w\-]+\.[\w\-\.]+\.*[\w]+>/i', $match, $email, PREG_OFFSET_CAPTURE)) {
+            $match = substr($match,0,$email[0][1]);
+            $email = substr($email[0][0],1,-1);
         }
-# print('Email: '.$email.'<br>');
 
         // get company name
-        if (preg_match('/\[(.*)\]/',$match,$company)){
-	    $match = str_replace($company[0], '', $match);
-	    $company=$company[1];
-# print('Company: '.$company.'<br>');
-        #     $match = substr($match,0,$email[0][1]);
-        #     $email = substr($email[0][0],1,-1);
+        if (preg_match('/\[(.*)\]/', $match, $company)) {
+            $match = str_replace($company[0], '', $match);
+            $company = $company[1];
         }
 
-# print('Jmeno: '.$match.'<br>');
         // the rest is the name
         $match = trim($match);
-        $pos = strrpos($match,' ');
-        if($pos !== false){
-            list($first,$middle) = explode(' ',substr($match,0,$pos),2);
-            $last   = substr($match,$pos+1);
+        $pos = strrpos($match, ' ');
+        if ($pos !== false) {
+            list($first,$middle) = explode(' ', substr($match, 0, $pos), 2);
+            $last   = substr($match, $pos + 1);
         } else {
             $first  = $match;
-            $middle = NULL;
-            $last   = NULL;
+            $middle = null;
+            $last   = null;
         }
 
         return array($first,$middle,$last,$email,$website,$birthday,$phones,trim($street),$zip,$city,trim($country),$company);

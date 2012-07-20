@@ -170,7 +170,7 @@ class vCard {
 $v = new vCard();
 
 $v->setName($_REQUEST['family-name'], $_REQUEST['given-name'], $_REQUEST['additional-name'], '');
-$v->setEmail($_REQUEST['mail']);
+$v->setEmail($_REQUEST['email']);
 $v->setCompany($_REQUEST['org']);
 $v->setURL($_REQUEST['website'], 'WORK');
 $v->setBirthday($_REQUEST['bday']);

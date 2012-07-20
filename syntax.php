@@ -95,7 +95,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			'given-name' => $first,
 			'additional-name' => $middle,
 			'family-name' => $last,
-			'mail' => $email,
+			'email' => $email,
 			'website' => $website,
 			'bday' => $birthday,
 			'work' => trim($phones[0]),
@@ -122,7 +122,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		$hcard = $this->getConf('do_hcard');
 
 		if ($this->getConf('email_shortcut')) {
-			$html .= ' '.$this->_emaillink($renderer, $data['mail']).' ';
+			$html .= ' '.$this->_emaillink($renderer, $data['email']).' ';
 		}
 
 		if ($hcard) {
@@ -140,7 +140,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		$url = DOKU_URL.'lib/plugins/vcard/vcard.php?'.buildURLparams($data);
-		$html .= $this->_weblink($renderer, $url, $name, 'iw_vcard url fn n', $data['mail']);
+		$html .= $this->_weblink($renderer, $url, $name, 'iw_vcard url fn n', $data['email']);
 
 		if ($this->have_folded) {
 			global $plugin_folded_count;
@@ -178,9 +178,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$folded .= $this->_tag('org', '<b class="org">'.$data['org'].'</b>');
 		}
 
-		if ($data['mail']) {
+		if ($data['email']) {
 			$folded .= ' <b>'.$this->getLang('email').'</b> ';
-			$folded .= $this->_emaillink($renderer, $data['mail'], $data['mail']);
+			$folded .= $this->_emaillink($renderer, $data['email'], $data['email']);
 		}
 
 		// TODO: normalize numbers and use <abbr title> for phone numbers
@@ -253,8 +253,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$folded .= '<b>'.$data['org'].'</b>';
 		}
 
-		if ($data['mail']) {
-			$folded .= ' '.$this->_emaillink($renderer, $data['mail'], $data['mail']);
+		if ($data['email']) {
+			$folded .= ' '.$this->_emaillink($renderer, $data['email'], $data['email']);
 		}
 
 		if ($data['work']) {
@@ -327,7 +327,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		return $renderer->_formatLink(array(
 			'url' => 'mailto:'.$mail,
 			'name' => $name,
-			'class'=> 'mail',
+			'class'=> 'email',
 		));
 	}
 

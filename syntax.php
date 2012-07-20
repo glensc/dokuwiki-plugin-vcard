@@ -204,7 +204,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			if ($hcard) {
 				$folded .= ' url';
 			}
-			$folded .= '" target="'.$conf['target']['extern'].'" onclick="return svchk()" onkeypress="return svchk()" rel="nofollow">'.$renderer->_xmlEntities($website).'</a>';
+			$folded .= '" target="'.$conf['target']['extern'].'" rel="nofollow">'.$renderer->_xmlEntities($website).'</a>';
 		}
 
 		if ($data['bday']) {

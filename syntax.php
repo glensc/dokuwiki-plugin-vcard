@@ -172,7 +172,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			if ($hcard) {
 				$html = '<b>work</b> '. $renderer->_xmlEntities($phones[0]);
 				$tel = $this->_tag('tel_type_work', $html, 'class="type"');
-				$folded .= $this->_tag('tel', $tel, 'class="tel"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
 			} else {
 				$folded .= ' <b>'.$this->getLang('work').':</b> '.
 				$renderer->_xmlEntities($phones[0]);
@@ -184,7 +184,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			if ($hcard) {
 				$html = '<b>cell</b> '. $renderer->_xmlEntities($phones[1]);
 				$tel = $this->_tag('tel_type_cell', $html, 'class="type"');
-				$folded .= $this->_tag('tel', $tel, 'class="tel"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
 			} else {
 				$folded .= ' <b>'.$this->getLang('cell').':</b> '.$renderer->_xmlEntities($phones[1]);
 			}
@@ -195,7 +195,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			if ($hcard) {
 				$html = '<b>home</b> '. $renderer->_xmlEntities($phones[2]);
 				$tel = $this->_tag('tel_type_home', $html, 'class="type"');
-				$folded .= $this->_tag('tel', $tel, 'class="tel"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
 			} else {
 				$folded .= ' <b>'.$this->getLang('home').'</b> '.$renderer->_xmlEntities($phones[2]);
 			}
@@ -219,7 +219,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$urlparams['birthday'] = $birthday;
 			if ($hcard) {
 				$html = '<b>birthday</b> '. $renderer->_xmlEntities($birthday);
-				$folded .= $this->_tag('bday', $html, 'class="bday"');
+				$folded .= ' '.$this->_tag('bday', $html, 'class="bday"');
 			}
 		}
 
@@ -229,7 +229,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			if ($hcard) {
 				$html = '<b>fax</b> '. $renderer->_xmlEntities($phones[3]);
 				$tel = $this->_tag('tel_type_fax', $html, 'class="type"');
-				$folded .= $this->_tag('tel', $tel, 'class="tel"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
 			}
 			$urlparams['fax'] = trim($phones[3]);
 		}
@@ -238,7 +238,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$urlparams['street'] = $street;
 			if ($hcard) {
 				$html = ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($street);
-				$folded .= $this->_tag('street-address', $html, 'class="street-address"');
+				$folded .= ' '.$this->_tag('street-address', $html, 'class="street-address"');
 			} else {
 				$folded .= ' '.$renderer->_xmlEntities($street).',';
 			}
@@ -248,7 +248,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$urlparams['zip'] = $zip;
 			if ($hcard) {
 				$html = $renderer->_xmlEntities($zip);
-				$folded .= $this->_tag('postal-code', $html, 'class="postal-code"');
+				$folded .= ' '.$this->_tag('postal-code', $html, 'class="postal-code"');
 			} else {
 				$folded .= ' '.$renderer->_xmlEntities($zip);
 			}
@@ -258,7 +258,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$urlparams['city'] = $city;
 			if ($hcard) {
 				$html = $renderer->_xmlEntities($city);
-				$folded .= $this->_tag('locality', $html, 'class="locality"');
+				$folded .= ' '.$this->_tag('locality', $html, 'class="locality"');
 			} else {
 				$folded .= ' '.$renderer->_xmlEntities($city);
 			}
@@ -268,7 +268,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$urlparams['country'] = $country;
 			if ($hcard) {
 				$html = $renderer->_xmlEntities($country);
-				$folded .= $this->_tag('country', $html, 'class="country-name"');
+				$folded .= ' '.$this->_tag('country', $html, 'class="country-name"');
 			}
 		}
 

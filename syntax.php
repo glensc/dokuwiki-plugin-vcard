@@ -32,7 +32,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 	function getType(){ return 'substition'; }
 	function getSort(){ return 314; }
-	function connectTo($mode) { $this->Lexer->addSpecialPattern("\{\{vcard>.*?\}\}",$mode,'plugin_vcard'); }
+	function connectTo($mode) { $this->Lexer->addSpecialPattern("{{vcard>.*?}}", $mode, 'plugin_vcard'); }
 
 	/**
 	 * Handle the match
@@ -42,7 +42,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		$match = substr($match, 8, -2);
 
 		// split address from rest and divide it into parts
-		list($match,$address) = explode('|', $match, 2);
+		list($match, $address) = explode('|', $match, 2);
 		if ($address) {
 			list($street, $place, $country) = explode(',', $address, 3);
 			list($zip, $city) = explode(' ', trim($place), 2);
@@ -56,15 +56,15 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		// get birthday
-		if (preg_match('/\d{4}\-\d{2}\-\d{2}/', $match, $birthday)) {
-			$birthday = $birthday[0];
+		if (preg_match('/\d{4}\-\d{2}\-\d{2}/', $match, $m)) {
+			$birthday = $m[0];
 		}
 
 		// get website
 		$punc = '.:?\-;,';
 		$any = '\w/~:.?+=&%@!\-';
-		if (preg_match('#http://['.$any.']+?(?=['.$punc.']*[^'.$any.'])#i',$match,$website)) {
-			$website = $website[0];
+		if (preg_match('#http://['.$any.']+?(?=['.$punc.']*[^'.$any.'])#i',$match, $m)) {
+			$website = $m[0];
 		}
 
 		// get e-mail address
@@ -74,9 +74,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		// get company name
-		if (preg_match('/\[(.*)\]/', $match, $company)) {
-			$match = str_replace($company[0], '', $match);
-			$company = $company[1];
+		if (preg_match('/\[(.*)\]/', $match, $m)) {
+			$match = str_replace($m[0], '', $match);
+			$company = $m[1];
 		}
 
 		// the rest is the name
@@ -91,7 +91,23 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$last  = null;
 		}
 
-		return array($first,$middle,$last,$email,$website,$birthday,$phones,trim($street),$zip,$city,trim($country),$company);
+		return array(
+			'first' => $first,
+			'middle' => $middle,
+			'last' => $last,
+			'email' => $email,
+			'website' => $website,
+			'birthday' => $birthday,
+			'work' => trim($phones[0]),
+			'cell' => trim($phones[1]),
+			'home' => trim($phones[2]),
+			'fax' => trim($phones[3]),
+			'street' => trim($street),
+			'zip' => $zip,
+			'city' => $city,
+			'country' => trim($country),
+			'org' => $company,
+		);
 	}
 
 	/**
@@ -104,9 +120,154 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 		global $conf;
 
-		list($first,$middle,$last,$email,$website,$birthday,$phones,$street,$zip,$city,$country,$company) = $data;
-
 		$hcard = $this->getConf('do_hcard');
+
+		$folded = '';
+		$fullname = '';
+
+		if ($hcard) {
+			$fullname .= $this->_tag('given-name', $data['first'], 'class="given-name"');
+		}
+
+		if ($data['middle']) {
+			if ($hcard) {
+				$fullname .= ' '.$this->_tag('additional-name', $data['middle'], 'class="additional-name"');
+			}
+		}
+
+		if ($data['last']) {
+			if ($hcard) {
+				$fullname .= ' '.$this->_tag('family-name', $data['last'], 'class="family-name"');
+			}
+		}
+
+		if ($hcard) {
+			$folded .= '<'.$this->getConf('tag_folded').'>';
+		}
+
+		if ($data['org']) {
+			if ($hcard) {
+				$folded .= $this->_tag('org', '<b class="org">'.$data['org'].'</b>');
+			} else {
+				$folded .= '<b>'.$data['org'].'</b>';
+			}
+		}
+
+		if ($data['email']) {
+			if ($hcard) {
+				$folded .= ' <b>'.$this->getLang('email').'</b> ';
+				$folded .= ' <a href="mailto:'.$data['email'].'" class="mail">'.$data['email'].'</a>';
+				$mailto .= ' <a href="mailto:'.$data['email'].'" class="mail"></a>';
+			} else {
+				$folded .= ' <a href="mailto:'.$data['email'].'" class="mail">'.$data['email'].'</a>';
+				$mailto .= ' <a href="mailto:'.$data['email'].'" class="mail"></a>';
+			}
+		}
+
+		if ($data['work']) {
+			if ($hcard) {
+				$html = '<b>work</b> '. $renderer->_xmlEntities($data['work']);
+				$tel = $this->_tag('tel_type_work', $html, 'class="type"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
+			} else {
+				$folded .= ' <b>'.$this->getLang('work').':</b> '.
+				$renderer->_xmlEntities($data['work']);
+			}
+		}
+		// 1: Mobile
+		if ($data['cell']) {
+			if ($hcard) {
+				$html = '<b>cell</b> '. $renderer->_xmlEntities($data['cell']);
+				$tel = $this->_tag('tel_type_cell', $html, 'class="type"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
+			} else {
+				$folded .= ' <b>'.$this->getLang('cell').':</b> '.$renderer->_xmlEntities($data['cell']);
+			}
+		}
+		// 2: Home
+		if ($data['home']) {
+			if ($hcard) {
+				$html = '<b>home</b> '. $renderer->_xmlEntities($data['home']);
+				$tel = $this->_tag('tel_type_home', $html, 'class="type"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
+			} else {
+				$folded .= ' <b>'.$this->getLang('home').'</b> '.$renderer->_xmlEntities($data['home']);
+			}
+		}
+
+		if ($data['website']) {
+			if ($hcard) {
+				$folded .= ' <b>'.$this->getLang('website').'</b> ';
+			}
+			$folded .= ' <a href="'.$data['website'].'" class="urlextern';
+
+			if ($hcard) {
+				$folded .= ' url';
+			}
+			$folded .= '" target="'.$conf['target']['extern'].'" onclick="return svchk()" onkeypress="return svchk()" rel="nofollow">'.$renderer->_xmlEntities($website).'</a>';
+		}
+
+		if ($data['birthday']) {
+			if ($hcard) {
+				$html = '<b>birthday</b> '. $renderer->_xmlEntities($data['birthday']);
+				$folded .= ' '.$this->_tag('bday', $html, 'class="bday"');
+			}
+		}
+
+		// 6: $phones
+		// 3: Fax
+		if ($data['fax']) {
+			if ($hcard) {
+				$html = '<b>fax</b> '. $renderer->_xmlEntities($data['fax']);
+				$tel = $this->_tag('tel_type_fax', $html, 'class="type"');
+				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
+			}
+		}
+
+		if ($data['street']) {
+			if ($hcard) {
+				$html = ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($data['street']);
+				$folded .= ' '.$this->_tag('street-address', $html, 'class="street-address"');
+			} else {
+				$folded .= ' '.$renderer->_xmlEntities($data['street']).',';
+			}
+		}
+		// 8: $zip
+		if ($data['zip']) {
+			$html = $renderer->_xmlEntities($data['zip']);
+			if ($hcard) {
+				$folded .= ' '.$this->_tag('postal-code', $html, 'class="postal-code"');
+			} else {
+				$folded .= ' '.$html;
+			}
+		}
+
+		if ($data['city']) {
+			$html = $renderer->_xmlEntities($data['city']);
+			if ($hcard) {
+				$folded .= ' '.$this->_tag('locality', $html, 'class="locality"');
+			} else {
+				$folded .= ' '.$html;
+			}
+		}
+
+		if ($data['country']) {
+			if ($hcard) {
+				$html = $renderer->_xmlEntities($data['country']);
+				$folded .= ' '.$this->_tag('country', $html, 'class="country-name"');
+			}
+		}
+
+		if ($hcard) {
+			$folded .= '</'.$this->getConf('tag_org').'>';
+		}
+		if ($hcard) {
+			$renderer->doc .= '<'.$this->getConf('tag_vcard').' class="vcard">';
+		}
+
+		if ($this->getConf('email_shortcut')) {
+			$renderer->doc .= $mailto. ' ';
+		}
 
 		$link = array();
 		$link['class'] = 'urlextern iw_vcard';
@@ -117,180 +278,13 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		$link['suf']    = '';
 		$link['more']   = 'rel="nofollow"';
 		$link['target'] = '';
-
-		// collect url parameters
-		$urlparams = array();
-
-		$folded = '';
-		// 0: $first
-		$urlparams['first'] = $first;
-		$fullname = '';
-		if ($hcard) {
-			$fullname .= $this->_tag('given-name', $first, 'class="given-name"');
-		}
-		// 1: $middle
-		if ( $middle ) {
-			$urlparams['middle'] = $middle;
-			if ($hcard) {
-				$fullname .= $this->_tag('additional-name', $middle, 'class="additional-name"');
-			}
-		}
-		// 2: $last
-		if ( $last ) {
-			$urlparams['last'] = $last;
-			if ($hcard) {
-				$fullname .= $this->_tag('family-name', $last, 'class="family-name"');
-			}
-		}
-		if ($hcard) {
-			$folded .= '<'.$this->getConf('tag_folded').'>';
-		}
-		// 11: $company
-		if ( $company ) {
-			$urlparams['org'] = $company;
-			if ($hcard) {
-				$folded .= $this->_tag('org', '<b class="org">'.$company.'</b>');
-			} else {
-				$folded .= '<b>'.$company.'</b>';
-			}
-		}
-		// 3: $email
-		if ( $email ){
-			$urlparams['email'] = $email;
-			if ($hcard) {
-				$folded .= ' <b>'.$this->getLang('email').'</b> ';
-				$folded .= ' <a href="mailto:'.$email.'" class="mail">'.$email.'</a>';
-				$mailto .= ' <a href="mailto:'.$email.'" class="mail"></a>';
-			} else {
-				$folded .= ' <a href="mailto:'.$email.'" class="mail">'.$email.'</a>';
-				$mailto .= ' <a href="mailto:'.$email.'" class="mail"></a>';
-			}
-		}
-		// 6: $phones
-		// 0: Work
-		if ( $phones[0] ){
-			$urlparams['work'] = trim($phones[0]);
-			if ($hcard) {
-				$html = '<b>work</b> '. $renderer->_xmlEntities($phones[0]);
-				$tel = $this->_tag('tel_type_work', $html, 'class="type"');
-				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
-			} else {
-				$folded .= ' <b>'.$this->getLang('work').':</b> '.
-				$renderer->_xmlEntities($phones[0]);
-			}
-		}
-		// 1: Mobile
-		if ( $phones[1] ){
-			$urlparams['cell'] = trim($phones[1]);
-			if ($hcard) {
-				$html = '<b>cell</b> '. $renderer->_xmlEntities($phones[1]);
-				$tel = $this->_tag('tel_type_cell', $html, 'class="type"');
-				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
-			} else {
-				$folded .= ' <b>'.$this->getLang('cell').':</b> '.$renderer->_xmlEntities($phones[1]);
-			}
-		}
-		// 2: Home
-		if ( $phones[2] ) {
-			$urlparams['home'] = trim($phones[2]);
-			if ($hcard) {
-				$html = '<b>home</b> '. $renderer->_xmlEntities($phones[2]);
-				$tel = $this->_tag('tel_type_home', $html, 'class="type"');
-				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
-			} else {
-				$folded .= ' <b>'.$this->getLang('home').'</b> '.$renderer->_xmlEntities($phones[2]);
-			}
-		}
-		// 4: $website
-		if ( $website ){
-			$urlparams['website'] = $website;
-			if ($hcard) {
-				$folded .= ' <b>'.$this->getLang('website').'</b> ';
-			}
-			$folded .= ' <a href="'.$website.'" class="urlextern';
-
-			if ($hcard) {
-				$folded .= ' url';
-			}
-			$folded .= '" target="'.$conf['target']['extern'].'" onclick="return svchk()" onkeypress="return svchk()" rel="nofollow">'.$renderer->_xmlEntities($website).'</a>';
-		}
-
-		// 5: $birthday
-		if ( $birthday ) {
-			$urlparams['birthday'] = $birthday;
-			if ($hcard) {
-				$html = '<b>birthday</b> '. $renderer->_xmlEntities($birthday);
-				$folded .= ' '.$this->_tag('bday', $html, 'class="bday"');
-			}
-		}
-
-		// 6: $phones
-		// 3: Fax
-		if ( $phones[3] ){
-			if ($hcard) {
-				$html = '<b>fax</b> '. $renderer->_xmlEntities($phones[3]);
-				$tel = $this->_tag('tel_type_fax', $html, 'class="type"');
-				$folded .= ' '.$this->_tag('tel', $tel, 'class="tel"');
-			}
-			$urlparams['fax'] = trim($phones[3]);
-		}
-		// 7: $street
-		if ( $street ){
-			$urlparams['street'] = $street;
-			if ($hcard) {
-				$html = ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($street);
-				$folded .= ' '.$this->_tag('street-address', $html, 'class="street-address"');
-			} else {
-				$folded .= ' '.$renderer->_xmlEntities($street).',';
-			}
-		}
-		// 8: $zip
-		if ( $zip ){
-			$urlparams['zip'] = $zip;
-			if ($hcard) {
-				$html = $renderer->_xmlEntities($zip);
-				$folded .= ' '.$this->_tag('postal-code', $html, 'class="postal-code"');
-			} else {
-				$folded .= ' '.$renderer->_xmlEntities($zip);
-			}
-		}
-		// 9: $city
-		if ( $city ){
-			$urlparams['city'] = $city;
-			if ($hcard) {
-				$html = $renderer->_xmlEntities($city);
-				$folded .= ' '.$this->_tag('locality', $html, 'class="locality"');
-			} else {
-				$folded .= ' '.$renderer->_xmlEntities($city);
-			}
-		}
-		// 10: $country
-		if ( $country ) {
-			$urlparams['country'] = $country;
-			if ($hcard) {
-				$html = $renderer->_xmlEntities($country);
-				$folded .= ' '.$this->_tag('country', $html, 'class="country-name"');
-			}
-		}
-
-
 		$link['title']  = $email;
-		$link['url'] = DOKU_URL.'lib/plugins/vcard/vcard.php?'.buildURLparams($urlparams);
+		$link['url'] = DOKU_URL.'lib/plugins/vcard/vcard.php?'.buildURLparams($data);
 
 		if ($hcard) {
 			$link['name'] = $fullname;
 		} else {
-			$link['name'] = $renderer->_xmlEntities($data[0] . ($last ? ' '.$last : ''));
-		}
-		if ($hcard) {
-			$folded .= '</'.$this->getConf('tag_org').'>';
-		}
-		if ($hcard) {
-			$renderer->doc .= '<'.$this->getConf('tag_vcard').' class="vcard">';
-		}
-
-		if ($this->getConf('email_shortcut')) {
-			$renderer->doc .= $mailto. ' ';
+			$link['name'] = $renderer->_xmlEntities($data['first']. ($data['last'] ? ' '.$data['last'] : ''));
 		}
 		$renderer->doc .= $renderer->_formatLink($link);
 

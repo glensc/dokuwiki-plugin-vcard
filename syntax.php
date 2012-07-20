@@ -92,20 +92,20 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		return array(
-			'first' => $first,
-			'middle' => $middle,
-			'last' => $last,
-			'email' => $email,
+			'given-name' => $first,
+			'additional-name' => $middle,
+			'family-name' => $last,
+			'mail' => $email,
 			'website' => $website,
-			'birthday' => $birthday,
+			'bday' => $birthday,
 			'work' => trim($phones[0]),
 			'cell' => trim($phones[1]),
 			'home' => trim($phones[2]),
 			'fax' => trim($phones[3]),
-			'street' => trim($street),
-			'zip' => $zip,
-			'city' => $city,
-			'country' => trim($country),
+			'street-address' => trim($street),
+			'postal-code' => $zip,
+			'locality' => $city,
+			'country-name' => trim($country),
 			'org' => $company,
 		);
 	}
@@ -126,18 +126,18 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		$fullname = '';
 
 		if ($hcard) {
-			$fullname .= $this->_tag('given-name', $data['first'], 'class="given-name"');
+			$fullname .= $this->_tag('given-name', $data['given-name'], 'class="given-name"');
 		}
 
-		if ($data['middle']) {
+		if ($data['additional-name']) {
 			if ($hcard) {
-				$fullname .= ' '.$this->_tag('additional-name', $data['middle'], 'class="additional-name"');
+				$fullname .= ' '.$this->_tag('additional-name', $data['additional-name'], 'class="additional-name"');
 			}
 		}
 
-		if ($data['last']) {
+		if ($data['family-name']) {
 			if ($hcard) {
-				$fullname .= ' '.$this->_tag('family-name', $data['last'], 'class="family-name"');
+				$fullname .= ' '.$this->_tag('family-name', $data['family-name'], 'class="family-name"');
 			}
 		}
 
@@ -153,14 +153,14 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			}
 		}
 
-		if ($data['email']) {
+		if ($data['mail']) {
 			if ($hcard) {
 				$folded .= ' <b>'.$this->getLang('email').'</b> ';
-				$folded .= ' <a href="mailto:'.$data['email'].'" class="mail">'.$data['email'].'</a>';
-				$mailto .= ' <a href="mailto:'.$data['email'].'" class="mail"></a>';
+				$folded .= ' <a href="mailto:'.$data['mail'].'" class="mail">'.$data['mail'].'</a>';
+				$mailto .= ' <a href="mailto:'.$data['mail'].'" class="mail"></a>';
 			} else {
-				$folded .= ' <a href="mailto:'.$data['email'].'" class="mail">'.$data['email'].'</a>';
-				$mailto .= ' <a href="mailto:'.$data['email'].'" class="mail"></a>';
+				$folded .= ' <a href="mailto:'.$data['mail'].'" class="mail">'.$data['mail'].'</a>';
+				$mailto .= ' <a href="mailto:'.$data['mail'].'" class="mail"></a>';
 			}
 		}
 
@@ -207,9 +207,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$folded .= '" target="'.$conf['target']['extern'].'" onclick="return svchk()" onkeypress="return svchk()" rel="nofollow">'.$renderer->_xmlEntities($website).'</a>';
 		}
 
-		if ($data['birthday']) {
+		if ($data['bday']) {
 			if ($hcard) {
-				$html = '<b>birthday</b> '. $renderer->_xmlEntities($data['birthday']);
+				$html = '<b>birthday</b> '. $renderer->_xmlEntities($data['bday']);
 				$folded .= ' '.$this->_tag('bday', $html, 'class="bday"');
 			}
 		}
@@ -224,17 +224,17 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			}
 		}
 
-		if ($data['street']) {
+		if ($data['street-address']) {
 			if ($hcard) {
-				$html = ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($data['street']);
+				$html = ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($data['street-address']);
 				$folded .= ' '.$this->_tag('street-address', $html, 'class="street-address"');
 			} else {
-				$folded .= ' '.$renderer->_xmlEntities($data['street']).',';
+				$folded .= ' '.$renderer->_xmlEntities($data['street-address']).',';
 			}
 		}
-		// 8: $zip
-		if ($data['zip']) {
-			$html = $renderer->_xmlEntities($data['zip']);
+
+		if ($data['postal-code']) {
+			$html = $renderer->_xmlEntities($data['postal-code']);
 			if ($hcard) {
 				$folded .= ' '.$this->_tag('postal-code', $html, 'class="postal-code"');
 			} else {
@@ -242,8 +242,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			}
 		}
 
-		if ($data['city']) {
-			$html = $renderer->_xmlEntities($data['city']);
+		if ($data['locality']) {
+			$html = $renderer->_xmlEntities($data['locality']);
 			if ($hcard) {
 				$folded .= ' '.$this->_tag('locality', $html, 'class="locality"');
 			} else {
@@ -251,9 +251,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			}
 		}
 
-		if ($data['country']) {
+		if ($data['country-name']) {
 			if ($hcard) {
-				$html = $renderer->_xmlEntities($data['country']);
+				$html = $renderer->_xmlEntities($data['country-name']);
 				$folded .= ' '.$this->_tag('country', $html, 'class="country-name"');
 			}
 		}

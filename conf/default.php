@@ -13,6 +13,6 @@ $conf['tag_tel_type_fax'] = 'span';
 $conf['tag_street-address'] = 'span';
 $conf['tag_postal-code'] = 'span';
 $conf['tag_locality'] = 'span';
-$conf['tag_country'] = 'span';
+$conf['tag_country-name'] = 'span';
 $conf['tag_bday'] = 'div';
 $conf['tag_folded'] = 'div';

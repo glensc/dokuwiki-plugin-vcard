@@ -169,16 +169,16 @@ class vCard {
 
 $v = new vCard();
 
-$v->setName($_REQUEST['last'],$_REQUEST['first'],$_REQUEST['middle'],'');
-$v->setEmail($_REQUEST['email']);
+$v->setName($_REQUEST['family-name'], $_REQUEST['given-name'], $_REQUEST['additional-name'], '');
+$v->setEmail($_REQUEST['mail']);
 $v->setCompany($_REQUEST['org']);
 $v->setURL($_REQUEST['website'], 'WORK');
-$v->setBirthday($_REQUEST['birthday']);
+$v->setBirthday($_REQUEST['bday']);
 $v->setPhoneNumber($_REQUEST['home'], 'PREF;HOME;VOICE');
 $v->setPhoneNumber($_REQUEST['cell'], 'CELL;VOICE');
 $v->setPhoneNumber($_REQUEST['work'], 'WORK;VOICE');
 $v->setPhoneNumber($_REQUEST['fax'], 'WORK;FAX');
-$v->setAddress('','',$_REQUEST['street'],$_REQUEST['city'],'',$_REQUEST['zip'], $_REQUEST['country']);
+$v->setAddress('', '', $_REQUEST['street-address'], $_REQUEST['locality'], '', $_REQUEST['postal-code'], $_REQUEST['country-name']);
 
 
 $output = $v->getVCard();
@@ -190,4 +190,3 @@ header('Connection: close');
 header('Content-Type: text/x-vCard; name='.$filename);
 
 echo $output;
-?>

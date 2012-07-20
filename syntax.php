@@ -217,9 +217,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 		if ($data['website']) {
 			$folded .= ' <b>'.$this->getLang('website').'</b> ';
-			$folded .= ' <a href="'.$data['website'].'" class="urlextern';
-			$folded .= ' url';
-			$folded .= '" target="'.$conf['target']['extern'].'" rel="nofollow">'.$renderer->_xmlEntities($data['website']).'</a>';
+			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']));
 		}
 
 		if ($data['bday']) {
@@ -286,8 +284,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($data['website']) {
-			$folded .= ' <a href="'.$data['website'].'" class="urlextern';
-			$folded .= '" target="'.$conf['target']['extern'].'" rel="nofollow">'.$renderer->_xmlEntities($data['website']).'</a>';
+			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']));
 		}
 
 		if ($data['street-address']) {
@@ -344,6 +341,17 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			'url' => 'mailto:'.$mail,
 			'name' => $name,
 			'class'=> 'mail',
+		)));
+	}
+
+	private function _weblink(&$renderer, $url, $name = "") {
+		global $conf;
+		return $renderer->_formatLink($this->_preparelink(array(
+			'url' => $url,
+			'name' => $name,
+			'rel' => 'nofollow',
+			'target' => $conf['target']['extern'],
+			'class'=> 'urlextern url',
 		)));
 	}
 }

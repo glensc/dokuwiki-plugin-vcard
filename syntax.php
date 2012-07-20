@@ -125,7 +125,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		$html = '';
 
 		if ($this->getConf('email_shortcut')) {
-			$html .= ' <a href="mailto:'.$data['mail'].'" class="mail"></a> ';
+			$html .= ' '.$this->_emaillink($renderer, $data['mail']).' ';
 		}
 
 		$link = array();
@@ -194,7 +194,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 		if ($data['mail']) {
 			$folded .= ' <b>'.$this->getLang('email').'</b> ';
-			$folded .= ' <a href="mailto:'.$data['mail'].'" class="mail">'.$data['mail'].'</a>';
+			$folded .= $this->_emaillink($renderer, $data['mail'], $data['mail']);
 		}
 
 		if ($data['work']) {
@@ -267,7 +267,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($data['mail']) {
-			$folded .= ' <a href="mailto:'.$data['mail'].'" class="mail">'.$data['mail'].'</a>';
+			$folded .= ' '.$this->_emaillink($renderer, $data['mail'], $data['mail']);
 		}
 
 		if ($data['work']) {
@@ -328,6 +328,23 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 	 */
 	private function _tagclass($tag, $text) {
 		return $this->_tag($tag, $text, $tag);
+	}
+
+	/**
+	 * helper to build link
+	 */
+	private function _preparelink($link) {
+		$link['pre'] = '';
+		$link['suf'] = '';
+		return $link;
+	}
+
+	private function _emaillink(&$renderer, $mail, $name = "") {
+		return $renderer->_formatLink($this->_preparelink(array(
+			'url' => 'mailto:'.$mail,
+			'name' => $name,
+			'class'=> 'mail',
+		)));
 	}
 }
 

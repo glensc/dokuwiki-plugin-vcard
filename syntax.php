@@ -273,7 +273,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 
 		$link['title']  = $email;
-		$link['url']    = DOKU_URL.'lib/plugins/vcard/vcard.php?'.http_build_query($urlparams, null, '&');
+		$link['url'] = DOKU_URL.'lib/plugins/vcard/vcard.php?'.buildURLparams($urlparams);
+
 		if ($hcard) {
 			$link['name'] = $fullname;
 		} else {

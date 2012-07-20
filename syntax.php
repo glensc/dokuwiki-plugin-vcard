@@ -238,8 +238,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $street ){
 			$urlparams['street'] = $street;
 			if ($hcard) {
-				$html .= ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($street).
-
+				$html = ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($street);
 				$folded .= $this->_tag('street-address', $html, 'class="street-address"');
 			} else {
 				$folded .= ' '.$renderer->_xmlEntities($street).',';

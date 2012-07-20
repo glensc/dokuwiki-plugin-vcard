@@ -146,9 +146,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $company ) {
 			$urlparams['org'] = $company;
 			if ($hcard) {
-				$folded .= '<'.$this->getConf('tag_org').'>';
-				$folded .= '<b class="org">'.$company.'</b>';
-				$folded .= '</'.$this->getConf('tag_org').'>';
+				$folded .= $this->_tag('org', '<b class="org">'.$company.'</b>');
 			} else {
 				$folded .= '<b>'.$company.'</b>';
 			}
@@ -170,13 +168,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $phones[0] ){
 			$urlparams['work'] = trim($phones[0]);
 			if ($hcard) {
-				$folded .= ' '.
-				'<'.$this->getConf('tag_tel').' class="tel">'.
-				'<'.$this->getConf('tag_tel_type_work').' class="type">'.
-				'<b>work</b> '.
-				$renderer->_xmlEntities($phones[0]).
-				'</'.$this->getConf('tag_tel_type_work').'>'.
-				'</'.$this->getConf('tag_tel').'>';
+				$html = '<b>work</b> '. $renderer->_xmlEntities($phones[0]);
+				$tel = $this->_tag('tel_type_work', $html, 'class="type"');
+				$folded .= $this->_tag('tel', $tel, 'class="tel"');
 			} else {
 				$folded .= ' <b>'.$this->getLang('work').':</b> '.
 				$renderer->_xmlEntities($phones[0]);
@@ -186,13 +180,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $phones[1] ){
 			$urlparams['cell'] = trim($phones[1]);
 			if ($hcard) {
-				$folded .= ' '.
-				'<'.$this->getConf('tag_tel').' class="tel">'.
-				'<'.$this->getConf('tag_tel_type_cell').' class="type">'.
-				'<b>cell</b> '.
-				$renderer->_xmlEntities($phones[1]).
-				'</'.$this->getConf('tag_tel_type_cell').'>'.
-				'</'.$this->getConf('tag_tel').'>';
+				$html = '<b>cell</b> '. $renderer->_xmlEntities($phones[1]);
+				$tel = $this->_tag('tel_type_cell', $html, 'class="type"');
+				$folded .= $this->_tag('tel', $tel, 'class="tel"');
 			} else {
 				$folded .= ' <b>'.$this->getLang('cell').':</b> '.$renderer->_xmlEntities($phones[1]);
 			}
@@ -201,13 +191,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $phones[2] ) {
 			$urlparams['home'] = trim($phones[2]);
 			if ($hcard) {
-				$folded .= ' '.
-				'<'.$this->getConf('tag_tel').' class="tel">'.
-				'<'.$this->getConf('tag_tel_type_home').' class="type">'.
-				'<b>home</b> '.
-				$renderer->_xmlEntities($phones[2]).
-				'</'.$this->getConf('tag_tel_type_cell').'>'.
-				'</'.$this->getConf('tag_tel').'>';
+				$html = '<b>home</b> '. $renderer->_xmlEntities($phones[2]);
+				$tel = $this->_tag('tel_type_home', $html, 'class="type"');
+				$folded .= $this->_tag('tel', $tel, 'class="tel"');
 			} else {
 				$folded .= ' <b>'.$this->getLang('home').'</b> '.$renderer->_xmlEntities($phones[2]);
 			}
@@ -230,11 +216,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $birthday ) {
 			$urlparams['birthday'] = $birthday;
 			if ($hcard) {
-				$folded .= ' '.
-				'<'.$this->getConf('tag_bday').' class="bday">'.
-				'<b>birthday</b> '.
-				$birthday.
-				'</'.$this->getConf('tag_bday').'> ';
+				$html = '<b>birthday</b> '. $renderer->_xmlEntities($birthday);
+				$folded .= $this->_tag('bday', $html, 'class="bday"');
 			}
 		}
 
@@ -242,13 +225,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		// 3: Fax
 		if ( $phones[3] ){
 			if ($hcard) {
-			$folded .= ' '.
-				'<'.$this->getConf('tag_tel').' class="tel">'.
-				'<'.$this->getConf('tag_tel_type_fax').' class="type">'.
-				'<b>fax</b> '.
-				trim($phones[3]).
-				'</'.$this->getConf('tag_tel_type_fax').'>'.
-				'</'.$this->getConf('tag_tel').'>';
+				$html = '<b>fax</b> '. $renderer->_xmlEntities($phones[3]);
+				$tel = $this->_tag('tel_type_fax', $html, 'class="type"');
+				$folded .= $this->_tag('tel', $tel, 'class="tel"');
 			}
 			$urlparams['fax'] = trim($phones[3]);
 		}
@@ -256,10 +235,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $street ){
 			$urlparams['street'] = $street;
 			if ($hcard) {
-				$folded .= ' <b>'.$this->getLang('address').'</b> '.
-				'<'.$this->getConf('tag_street-address').' class="street-address">'.
-				$renderer->_xmlEntities($street).
-				'</'.$this->getConf('tag_street-address').'>,';
+				$html .= ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($street).
+
+				$folded .= $this->_tag('street-address', $html, 'class="street-address"');
 			} else {
 				$folded .= ' '.$renderer->_xmlEntities($street).',';
 			}
@@ -268,9 +246,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $zip ){
 			$urlparams['zip'] = $zip;
 			if ($hcard) {
-				$folded .= ' <'.$this->getConf('tag_postal-code').' class="postal-code">'.
-				$renderer->_xmlEntities($zip).
-				'</'.$this->getConf('tag_postal-code').'>';
+				$html = $renderer->_xmlEntities($zip);
+				$folded .= $this->_tag('postal-code', $html, 'class="postal-code"');
 			} else {
 				$folded .= ' '.$renderer->_xmlEntities($zip);
 			}
@@ -279,9 +256,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $city ){
 			$urlparams['city'] = $city;
 			if ($hcard) {
-				$folded .= ' <'.$this->getConf('tag_locality').' class="locality">'.
-				$renderer->_xmlEntities($city).
-				'</'.$this->getConf('tag_locality').'>';
+				$html = $renderer->_xmlEntities($city);
+				$folded .= $this->_tag('locality', $html, 'class="locality"');
 			} else {
 				$folded .= ' '.$renderer->_xmlEntities($city);
 			}
@@ -290,9 +266,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $country ) {
 			$urlparams['country'] = $country;
 			if ($hcard) {
-				$folded .= ' <'.$this->getConf('tag_country').' class="country-name">'.
-				$renderer->_xmlEntities($country).
-				'</'.$this->getConf('tag_country').'>';
+				$html = $renderer->_xmlEntities($country);
+				$folded .= $this->_tag('country', $html, 'class="country-name"');
 			}
 		}
 
@@ -310,6 +285,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ($hcard) {
 			$renderer->doc .= '<'.$this->getConf('tag_vcard').' class="vcard">';
 		}
+
 		if ($this->getConf('email_shortcut')) {
 			$renderer->doc .= $mailto. ' ';
 		}
@@ -321,7 +297,6 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$renderer->doc .= '<span class="folded hidden" id="folded_'.$plugin_folded_count.'">';
 			$renderer->doc .= $folded;
 			$renderer->doc .= '</span>';
-
 		}
 
 		if ($hcard) {
@@ -329,6 +304,21 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		return true;
+	}
+
+	/**
+	 * create $tag with $params
+	 */
+	private function _tag($tag_, $text, $params = '') {
+		$tag = $this->getConf("tag_$tag_");
+		$html = '';
+		$html .= '<'.$tag;
+		if ($params) {
+			$html .= ' '. $params;
+		}
+		$html .= '>'.$text;
+		$html .= '</'.$tag.'>';
+		return $html;
 	}
 }
 

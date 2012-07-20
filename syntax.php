@@ -126,20 +126,20 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		$urlparams['first'] = $first;
 		$fullname = '';
 		if ($hcard) {
-			$fullname .= '<span class="given-name">'.$first.'</span>';
+			$fullname .= $this->_tag('given-name', $first, 'class="given-name"');
 		}
 		// 1: $middle
 		if ( $middle ) {
 			$urlparams['middle'] = $middle;
 			if ($hcard) {
-				$fullname .= ' <span class="additional-name">'.$middle.'</span>';
+				$fullname .= $this->_tag('additional-name', $middle, 'class="additional-name"');
 			}
 		}
 		// 2: $last
 		if ( $last ) {
 			$urlparams['last'] = $last;
 			if ($hcard) {
-				$fullname .= ' <span class="family-name">'.$last.'</span>';
+				$fullname .= $this->_tag('family-name', $last, 'class="family-name"');
 			}
 		}
 		if ($hcard) {
@@ -318,6 +318,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 	 */
 	private function _tag($tag_, $text, $params = '') {
 		$tag = $this->getConf("tag_$tag_");
+		if (!$tag) {
+			$tag = 'span';
+		}
 		$html = '';
 		$html .= '<'.$tag;
 		if ($params) {

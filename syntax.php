@@ -284,7 +284,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ($hcard) {
 			$link['name'] = $fullname;
 		} else {
-			$link['name'] = $renderer->_xmlEntities($data['first']. ($data['last'] ? ' '.$data['last'] : ''));
+			$link['name'] = $renderer->_xmlEntities($data['given-name']. ($data['family-name'] ? ' '.$data['family-name'] : ''));
 		}
 		$renderer->doc .= $renderer->_formatLink($link);
 

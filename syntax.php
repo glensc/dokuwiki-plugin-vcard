@@ -3,6 +3,9 @@
  * vCard Plugin: creates a link to download a vCard file
  * uses the vCard class by Kai Blankenhorn <kaib@bitfolge.de>
  *
+ * Can also output hCard microformat:
+ * @link http://microformats.org/wiki/hcard
+ *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <esther@kaffeehaus.ch>
  * @author     Jürgen A.Lamers <jaloma.ac@googlemail.de>
@@ -129,7 +132,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ( $middle ) {
 			$urlparams['middle'] = $middle;
 			if ($hcard) {
-				$fullname .= ' <span class="addional-name">'.$middle.'</span>';
+				$fullname .= ' <span class="additional-name">'.$middle.'</span>';
 			}
 		}
 		// 2: $last

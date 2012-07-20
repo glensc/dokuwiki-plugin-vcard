@@ -183,22 +183,25 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$folded .= $this->_emaillink($renderer, $data['mail'], $data['mail']);
 		}
 
+		// TODO: normalize numbers and use <abbr title> for phone numbers
+		// see http://microformats.org/wiki/value-class-pattern
+
 		if ($data['work']) {
-			$html = '<b>work</b> '. $renderer->_xmlEntities($data['work']);
-			$tel = $this->_tag('tel_type_work', $html, 'type');
-			$folded .= ' '.$this->_tagclass('tel', $tel);
+			$type = '<b>'.$this->_tag('tel_type', 'work', 'type').'</b> ';
+			$value = $this->_tagclass('tel_value', $renderer->_xmlEntities($data['work']));
+			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['cell']) {
-			$html = '<b>cell</b> '. $renderer->_xmlEntities($data['cell']);
-			$tel = $this->_tag('tel_type_cell', $html, 'type');
-			$folded .= ' '.$this->_tagclass('tel', $tel);
+			$type = '<b>'.$this->_tag('tel_type', 'cell', 'type').'</b> ';
+			$value = $this->_tagclass('tel_value', $renderer->_xmlEntities($data['cell']));
+			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['home']) {
-			$html = '<b>home</b> '. $renderer->_xmlEntities($data['home']);
-			$tel = $this->_tag('tel_type_home', $html, 'type');
-			$folded .= ' '.$this->_tagclass('tel', $tel);
+			$type = '<b>'.$this->_tag('tel_type', 'home', 'type').'</b> ';
+			$value = $this->_tagclass('tel_value', $renderer->_xmlEntities($data['home']));
+			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['website']) {
@@ -301,7 +304,14 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		if ($class) {
 			$html .= ' class="'. $class. '"';
 		}
-		$html .= '>'.$text;
+
+		// if tag is 'abbr', use translation and value in title
+		if ($tag == 'abbr') {
+			$html .= ' title="'. $text. '"';
+			$html .= '>'.$this->getLang($text);
+		} else {
+			$html .= '>'.$text;
+		}
 		$html .= '</'.$tag.'>';
 		return $html;
 	}

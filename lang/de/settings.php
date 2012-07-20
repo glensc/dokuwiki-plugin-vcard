@@ -9,6 +9,7 @@ $lang['tag_tel_type_work'] = 'Tag für TEL TYPE WORK';
 $lang['tag_tel_type_cell'] = 'Tag für TEL TYPE CELL';
 $lang['tag_tel_type_home'] = 'Tag für TEL TYPE HOME';
 $lang['tag_tel_type_fax'] = 'Tag für TEL TYPE FAX';
+$lang['tag_tel_value'] = 'Tag für TEL VALUE';
 $lang['tag_street-address'] = 'Tag für STREET-ADDRESS';
 $lang['tag_postal-code'] = 'Tag für POSTAL-CODE';
 $lang['tag_locality'] = 'Tag für LOCALITY';

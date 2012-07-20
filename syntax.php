@@ -118,43 +118,29 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			return false;
 		}
 
-		global $conf;
-
-		$hcard = $this->getConf('do_hcard');
-
 		$html = '';
+		$hcard = $this->getConf('do_hcard');
 
 		if ($this->getConf('email_shortcut')) {
 			$html .= ' '.$this->_emaillink($renderer, $data['mail']).' ';
 		}
 
-		$link = array();
-		$link['class'] = 'urlextern iw_vcard';
 		if ($hcard) {
-			$link['class'] .= ' url fn n';
-		}
-		$link['pre']    = '';
-		$link['suf']    = '';
-		$link['more']   = 'rel="nofollow"';
-		$link['target'] = '';
-		$link['title']  = $email;
-		$link['url'] = DOKU_URL.'lib/plugins/vcard/vcard.php?'.buildURLparams($data);
-
-		if ($hcard) {
-			$fullname = $this->_tagclass('given-name', $data['given-name']);
+			$name = $this->_tagclass('given-name', $data['given-name']);
 
 			if ($data['additional-name']) {
-				$fullname .= ' '.$this->_tagclass('additional-name', $data['additional-name']);
+				$name .= ' '.$this->_tagclass('additional-name', $data['additional-name']);
 			}
 
 			if ($data['family-name']) {
-				$fullname .= ' '.$this->_tagclass('family-name', $data['family-name']);
+				$name .= ' '.$this->_tagclass('family-name', $data['family-name']);
 			}
-			$link['name'] = $fullname;
 		} else {
-			$link['name'] = $renderer->_xmlEntities($data['given-name']. ($data['family-name'] ? ' '.$data['family-name'] : ''));
+			$name = $renderer->_xmlEntities($data['given-name']. ($data['family-name'] ? ' '.$data['family-name'] : ''));
 		}
-		$html .= $renderer->_formatLink($link);
+
+		$url = DOKU_URL.'lib/plugins/vcard/vcard.php?'.buildURLparams($data);
+		$html .= $this->_weblink($renderer, $url, $name, 'iw_vcard url fn n', $data['mail']);
 
 		if ($this->have_folded) {
 			global $plugin_folded_count;
@@ -217,7 +203,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 		if ($data['website']) {
 			$folded .= ' <b>'.$this->getLang('website').'</b> ';
-			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']));
+			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']), 'url');
 		}
 
 		if ($data['bday']) {
@@ -284,7 +270,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($data['website']) {
-			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']));
+			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']), 'url');
 		}
 
 		if ($data['street-address']) {
@@ -327,32 +313,24 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		return $this->_tag($tag, $text, $tag);
 	}
 
-	/**
-	 * helper to build link
-	 */
-	private function _preparelink($link) {
-		$link['pre'] = '';
-		$link['suf'] = '';
-		return $link;
-	}
-
-	private function _emaillink(&$renderer, $mail, $name = "") {
-		return $renderer->_formatLink($this->_preparelink(array(
+	private function _emaillink(&$renderer, $mail, $name = '') {
+		return $renderer->_formatLink(array(
 			'url' => 'mailto:'.$mail,
 			'name' => $name,
 			'class'=> 'mail',
-		)));
+		));
 	}
 
-	private function _weblink(&$renderer, $url, $name = "") {
+	private function _weblink(&$renderer, $url, $name = '', $class = '', $title ='') {
 		global $conf;
-		return $renderer->_formatLink($this->_preparelink(array(
+		return $renderer->_formatLink(array(
 			'url' => $url,
 			'name' => $name,
+			'title' => $title,
 			'rel' => 'nofollow',
 			'target' => $conf['target']['extern'],
-			'class'=> 'urlextern url',
-		)));
+			'class'=> trim('urlextern '. $class),
+		));
 	}
 }
 

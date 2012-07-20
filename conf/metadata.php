@@ -5,7 +5,6 @@ $meta['email_shortcut'] = array('onoff');
 $meta['tag_vcard']= array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_org'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_tel'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
-$meta['tag_tel_type'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_tel_type_work'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_tel_type_cell'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_tel_type_home'] = array('multichoice', '_choices' => array('div','abbr','span','p'));

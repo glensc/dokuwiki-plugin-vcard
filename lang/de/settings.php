@@ -4,7 +4,6 @@ $lang['do_hcard'] = 'Erzeuge HCard-Tags';
 $lang['tag_vcard']= 'Tag für VCARD';
 $lang['tag_org'] = 'Tag für ORG';
 $lang['tag_tel'] = 'Tag für TEL';
-$lang['tag_tel_type'] = 'Tag für TEL TYPE';
 $lang['tag_tel_type_work'] = 'Tag für TEL TYPE WORK';
 $lang['tag_tel_type_cell'] = 'Tag für TEL TYPE CELL';
 $lang['tag_tel_type_home'] = 'Tag für TEL TYPE HOME';

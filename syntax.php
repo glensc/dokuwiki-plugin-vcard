@@ -187,19 +187,19 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		// see http://microformats.org/wiki/value-class-pattern
 
 		if ($data['work']) {
-			$type = '<b>'.$this->_tag('tel_type', 'work', 'type').'</b> ';
+			$type = '<b>'.$this->_tag('tel_type_work', 'work', 'type').'</b> ';
 			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['work']), 'value');
 			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['cell']) {
-			$type = '<b>'.$this->_tag('tel_type', 'cell', 'type').'</b> ';
+			$type = '<b>'.$this->_tag('tel_type_cell', 'cell', 'type').'</b> ';
 			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['cell']), 'value');
 			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['home']) {
-			$type = '<b>'.$this->_tag('tel_type', 'home', 'type').'</b> ';
+			$type = '<b>'.$this->_tag('tel_type_home', 'home', 'type').'</b> ';
 			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['home']), 'value');
 			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
@@ -215,9 +215,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($data['fax']) {
-			$html = '<b>fax</b> '. $renderer->_xmlEntities($data['fax']);
-			$tel = $this->_tag('tel_type_fax', $html, 'type');
-			$folded .= ' '.$this->_tagclass('tel', $tel);
+			$type = '<b>'.$this->_tag('tel_type_fax', 'fax', 'type').'</b> ';
+			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['fax']), 'value');
+			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['street-address']) {

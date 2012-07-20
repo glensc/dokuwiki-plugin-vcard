@@ -16,16 +16,21 @@ if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../')
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
 
-// maintain a global count of the number of expandable vcards in the page,
-// this allows each to be uniquely identified
-global $plugin_folded_count;
-if (!isset($plugin_folded_count)) $plugin_folded_count = 0;
-
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
  */
 class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
+	/**
+	 * plugin folded is present and enabled
+	 * @var bool $have_folded
+	 */
+	private $have_folded = false;
+
+	public function __construct() {
+		$this->have_folded = !plugin_isdisabled('folded');
+	}
+
 	function getType(){ return 'substition'; }
 	function getSort(){ return 314; }
 	function connectTo($mode) { $this->Lexer->addSpecialPattern("\{\{vcard>.*?\}\}",$mode,'plugin_vcard'); }
@@ -98,12 +103,9 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			return false;
 		}
 
-		global $plugin_folded_count;
 		global $conf;
 
 		list($first,$middle,$last,$email,$website,$birthday,$phones,$street,$zip,$city,$country,$company) = $data;
-
-		$plugin_folded_count++;
 
 		$hcard = $this->getConf('do_hcard');
 
@@ -293,7 +295,11 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 		$renderer->doc .= $renderer->_formatLink($link);
 
-		if (@file_exists(DOKU_INC.'lib/plugins/folded/closed.gif') && $folded){
+		if ($this->have_folded && $folded) {
+			global $plugin_folded_count;
+
+			$plugin_folded_count++;
+
 			// folded plugin is installed: enables additional feature
 			$renderer->doc .= '<a href="#folded_'.$plugin_folded_count.'" class="folder"></a>';
 			$renderer->doc .= '<span class="folded hidden" id="folded_'.$plugin_folded_count.'">';

@@ -188,19 +188,19 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 		if ($data['work']) {
 			$type = '<b>'.$this->_tag('tel_type', 'work', 'type').'</b> ';
-			$value = $this->_tagclass('tel_value', $renderer->_xmlEntities($data['work']));
+			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['work']), 'value');
 			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['cell']) {
 			$type = '<b>'.$this->_tag('tel_type', 'cell', 'type').'</b> ';
-			$value = $this->_tagclass('tel_value', $renderer->_xmlEntities($data['cell']));
+			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['cell']), 'value');
 			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 
 		if ($data['home']) {
 			$type = '<b>'.$this->_tag('tel_type', 'home', 'type').'</b> ';
-			$value = $this->_tagclass('tel_value', $renderer->_xmlEntities($data['home']));
+			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['home']), 'value');
 			$folded .= ' '.$this->_tagclass('tel', $type.$value);
 		}
 

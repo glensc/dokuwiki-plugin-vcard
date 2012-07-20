@@ -183,25 +183,16 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$folded .= $this->_emaillink($renderer, $data['email'], $data['email']);
 		}
 
-		// TODO: normalize numbers and use <abbr title> for phone numbers
-		// see http://microformats.org/wiki/value-class-pattern
-
 		if ($data['work']) {
-			$type = '<b>'.$this->_tag('tel_type_work', 'work', 'type').'</b> ';
-			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['work']), 'value');
-			$folded .= ' '.$this->_tagclass('tel', $type.$value);
+			$folded .= ' '.$this->_tel($renderer, 'work', $data['work']);
 		}
 
 		if ($data['cell']) {
-			$type = '<b>'.$this->_tag('tel_type_cell', 'cell', 'type').'</b> ';
-			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['cell']), 'value');
-			$folded .= ' '.$this->_tagclass('tel', $type.$value);
+			$folded .= ' '.$this->_tel($renderer, 'cell', $data['cell']);
 		}
 
 		if ($data['home']) {
-			$type = '<b>'.$this->_tag('tel_type_home', 'home', 'type').'</b> ';
-			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['home']), 'value');
-			$folded .= ' '.$this->_tagclass('tel', $type.$value);
+			$folded .= ' '.$this->_tel($renderer, 'home', $data['home']);
 		}
 
 		if ($data['website']) {
@@ -215,9 +206,7 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($data['fax']) {
-			$type = '<b>'.$this->_tag('tel_type_fax', 'fax', 'type').'</b> ';
-			$value = $this->_tag('tel_value', $renderer->_xmlEntities($data['fax']), 'value');
-			$folded .= ' '.$this->_tagclass('tel', $type.$value);
+			$folded .= ' '.$this->_tel($renderer, 'fax', $data['fax']);
 		}
 
 		if ($data['street-address']) {
@@ -321,6 +310,19 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 	 */
 	private function _tagclass($tag, $text) {
 		return $this->_tag($tag, $text, $tag);
+	}
+
+	/**
+	 * format hcard telephone numbers
+	 */
+	private function _tel(&$renderer, $type, $value) {
+		// TODO: normalize numbers and use <abbr title> for phone numbers
+		// see http://microformats.org/wiki/value-class-pattern
+
+		$type = '<b>'.$this->_tag('tel_type_'.$type, $type, 'type').'</b> ';
+		$value = $this->_tag('tel_value', $renderer->_xmlEntities($value), 'value');
+
+		return $this->_tagclass('tel', $type.$value);
 	}
 
 	private function _emaillink(&$renderer, $mail, $name = '') {

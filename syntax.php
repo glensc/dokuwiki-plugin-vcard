@@ -108,11 +108,10 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		$hcard = $this->getConf('do_hcard');
 
 		$link = array();
-		$link['class'] = 'urlextern';
+		$link['class'] = 'urlextern iw_vcard';
 		if ($hcard) {
 			$link['class'] .= ' url fn n';
 		}
-		$link['style']  = 'background-image: url('.DOKU_BASE.'lib/plugins/vcard/vcf.gif)';
 		$link['pre']    = '';
 		$link['suf']    = '';
 		$link['more']   = 'rel="nofollow"';

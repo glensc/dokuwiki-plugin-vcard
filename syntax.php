@@ -216,14 +216,19 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 			$addr[] = $this->_tagclass('street-address', $html);
 		}
 
-		if ($data['postal-code']) {
-			$html = $renderer->_xmlEntities($data['postal-code']);
-			$addr[] = $this->_tagclass('postal-code', $html);
-		}
+		// postal code and locality (city) separated by space
+		if ($data['postal-code'] || $data['locality']) {
+			$loc = array();
+			if ($data['postal-code']) {
+				$html = $renderer->_xmlEntities($data['postal-code']);
+				$loc[] = $this->_tagclass('postal-code', $html);
+			}
 
-		if ($data['locality']) {
-			$html = $renderer->_xmlEntities($data['locality']);
-			$addr[] = $this->_tagclass('locality', $html);
+			if ($data['locality']) {
+				$html = $renderer->_xmlEntities($data['locality']);
+				$loc[] = $this->_tagclass('locality', $html);
+			}
+			$addr[] = join(' ', $loc);
 		}
 
 		if ($data['country-name']) {

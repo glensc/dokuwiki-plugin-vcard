@@ -313,16 +313,52 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 	}
 
 	/**
+	 * normalize telephone number to include all non-numeric outside class=value
+	 * see http://microformats.org/wiki/value-class-pattern
+	 */
+	private function _tel_normalize($value) {
+		$res = array();
+
+		// match all but +, digits and space
+		if (!preg_match_all('/[^+\d\s]+/', $value, $matches, PREG_OFFSET_CAPTURE)) {
+			$res[] = array('+', $value);
+			return $res;
+		}
+
+		$offset  = 0;
+		foreach ($matches[0] as $match) {
+			$v = substr($value, $offset, $match[1] - $offset);
+			if ($v) {
+				$res[] = array('+', $v);
+			}
+			$res[] = array('-', $match[0]);
+			$offset = $match[1] + strlen($match[0]);
+		}
+		$v = substr($value, $offset);
+		if ($v) {
+			$res[] = array('+', $v);
+		}
+		return $res;
+	}
+
+	/**
 	 * format hcard telephone numbers
 	 */
 	private function _tel(&$renderer, $type, $value) {
-		// TODO: normalize numbers and use <abbr title> for phone numbers
-		// see http://microformats.org/wiki/value-class-pattern
 
 		$type = '<b>'.$this->_tag('tel_type_'.$type, $type, 'type').'</b> ';
-		$value = $this->_tag('tel_value', $renderer->_xmlEntities($value), 'value');
 
-		return $this->_tagclass('tel', $type.$value);
+		$values = '';
+		foreach ($this->_tel_normalize($value) as $res) {
+			list($t, $value) = $res;
+			if ($t === '+') {
+				$values .= $this->_tag('tel_value', $renderer->_xmlEntities($value), 'value');
+			} else {
+				$values .= $value;
+			}
+		}
+
+		return $this->_tagclass('tel', $type.$values);
 	}
 
 	private function _emaillink(&$renderer, $mail, $name = '') {

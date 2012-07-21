@@ -1,8 +1,10 @@
 <?php
 
-$lang['work'] = 'work';
-$lang['cell'] = 'mobile';
-$lang['home'] = 'private';
-$lang['website'] = 'homepage';
-$lang['address'] = 'address';
-$lang['email'] = 'email';
+$lang['work'] = 'Work';
+$lang['cell'] = 'Mobile';
+$lang['home'] = 'Private';
+$lang['fax'] = 'Fax';
+$lang['website'] = 'Homepage';
+$lang['address'] = 'Address';
+$lang['email'] = 'EMail';
+$lang['bday'] = 'Birthday';

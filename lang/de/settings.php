@@ -14,5 +14,6 @@ $lang['tag_postal-code'] = 'Tag für POSTAL-CODE';
 $lang['tag_locality'] = 'Tag für LOCALITY';
 $lang['tag_country-name'] = 'Tag für COUNTRY-NAME';
 $lang['tag_bday'] = 'Tag für BDAY';
+$lang['tag_url'] = 'Tag für URL';
 $lang['tag_folded'] = 'Tag für FOLDED';
 $lang['email_shortcut'] = 'Erzeuge EPost-Button ausserhalb von "Folded"';

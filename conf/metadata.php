@@ -15,4 +15,5 @@ $meta['tag_postal-code'] = array('multichoice', '_choices' => array('div','abbr'
 $meta['tag_locality'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_country'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_bday'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
+$meta['tag_url'] = array('multichoice', '_choices' => array('div','abbr','span','p'));
 $meta['tag_folded'] = array('multichoice', '_choices' => array('div','abbr','span','p'));

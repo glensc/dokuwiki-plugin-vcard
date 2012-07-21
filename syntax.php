@@ -184,49 +184,55 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($data['work']) {
-			$folded .= ' '.$this->_tel($renderer, 'work', $data['work']);
+			$folded .= $this->_tel($renderer, 'work', $data['work']);
 		}
 
 		if ($data['cell']) {
-			$folded .= ' '.$this->_tel($renderer, 'cell', $data['cell']);
+			$folded .= $this->_tel($renderer, 'cell', $data['cell']);
 		}
 
 		if ($data['home']) {
-			$folded .= ' '.$this->_tel($renderer, 'home', $data['home']);
-		}
-
-		if ($data['website']) {
-			$folded .= ' <b>'.$this->getLang('website').'</b> ';
-			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']), 'url');
-		}
-
-		if ($data['bday']) {
-			$html = '<b>birthday</b> '. $renderer->_xmlEntities($data['bday']);
-			$folded .= ' '.$this->_tagclass('bday', $html);
+			$folded .= $this->_tel($renderer, 'home', $data['home']);
 		}
 
 		if ($data['fax']) {
-			$folded .= ' '.$this->_tel($renderer, 'fax', $data['fax']);
+			$folded .= $this->_tel($renderer, 'fax', $data['fax']);
 		}
 
+		if ($data['website']) {
+			$html = '<b>'.$this->getLang('website').'</b> ';
+			$html .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']), 'url');
+			$folded .= $this->_tag('url', $html);
+		}
+
+		if ($data['bday']) {
+			$html = '<b>'.$this->getLang('bday').'</b> '. $renderer->_xmlEntities($data['bday']);
+			$folded .= $this->_tagclass('bday', $html);
+		}
+
+		$addr = array();
 		if ($data['street-address']) {
-			$html = ' <b>'.$this->getLang('address').'</b> '. $renderer->_xmlEntities($data['street-address']);
-			$folded .= ' '.$this->_tagclass('street-address', $html);
+			$html = $renderer->_xmlEntities($data['street-address']);
+			$addr[] = $this->_tagclass('street-address', $html);
 		}
 
 		if ($data['postal-code']) {
 			$html = $renderer->_xmlEntities($data['postal-code']);
-			$folded .= ' '.$this->_tagclass('postal-code', $html);
+			$addr[] = $this->_tagclass('postal-code', $html);
 		}
 
 		if ($data['locality']) {
 			$html = $renderer->_xmlEntities($data['locality']);
-			$folded .= ' '.$this->_tagclass('locality', $html);
+			$addr[] = $this->_tagclass('locality', $html);
 		}
 
 		if ($data['country-name']) {
 			$html = $renderer->_xmlEntities($data['country-name']);
-			$folded .= ' '.$this->_tagclass('country-name', $html);
+			$addr[] = $this->_tagclass('country-name', $html);
+		}
+
+		if (!empty($addr)) {
+			$folded .= ' <b>'.$this->getLang('address').'</b> '. join(', ', $addr);
 		}
 
 		return $folded;
@@ -234,6 +240,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 
 	/**
 	 * Build plain formatting for vCard
+	 * @deprecated, to be dropped if hCard output is complete, because this
+	 * portion is incomplete and hCard provides similar (but complete) output
 	 */
 	private function _folded_vcard(&$renderer, $data) {
 		$folded = '';
@@ -262,7 +270,8 @@ class syntax_plugin_vcard extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($data['website']) {
-			$folded .= $this->_weblink($renderer, $data['website'], $renderer->_xmlEntities($data['website']), 'url');
+			$html = $renderer->_xmlEntities($data['website']);
+			$folded .= $this->_weblink($renderer, $data['website'], $html, 'url');
 		}
 
 		if ($data['street-address']) {
